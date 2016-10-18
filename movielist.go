@@ -19,9 +19,19 @@ type MovieFile struct {
 	MovieUpdDatetime string
 }
 
-// ReadPrevious ... 前回監視時の動画ファイル情報リストを取得
-func ReadPrevious(dirPath string) (*MovieList, error) {
-	file, err := os.OpenFile(filepath.Join(dirPath, "prev.list"), os.O_RDONLY, 0)
+// ReadMovieList ... 動画ファイル情報リストを読み込むインタフェース
+type ReadMovieList interface {
+	ReadMovieList() (*MovieList, error)
+}
+
+// PreviousMovieList ... 前回監視時の動画ファイル情報リスト取得用の構造体
+type PreviousMovieList struct {
+	TargetPath string
+}
+
+// ReadMovieList ...
+func (p *PreviousMovieList) ReadMovieList() (*MovieList, error) {
+	file, err := os.OpenFile(filepath.Join(p.TargetPath, "prev.list"), os.O_RDONLY, 0)
 	if err != nil {
 		return nil, nil
 	}
@@ -43,6 +53,17 @@ func ReadPrevious(dirPath string) (*MovieList, error) {
 	return &MovieList{MovieFiles: movieFiles}, nil
 }
 
+// CurrentMovieList ... 最新の動画ファイル情報リスト取得用の構造体
+type CurrentMovieList struct {
+	TargetPath string
+}
+
+// ReadMovieList ...
+func (c *CurrentMovieList) ReadMovieList() (*MovieList, error) {
+
+	return nil, nil
+}
+
 func isInvalidLine(line string) bool {
 	lineSeps := strings.Split(line, ",")
 	if len(lineSeps) != 2 {
@@ -59,10 +80,4 @@ func createMovieFile(line string) MovieFile {
 	return MovieFile{
 		MovieFileName:    lineSeps[0],
 		MovieUpdDatetime: lineSeps[1]}
-}
-
-// ReadCurrent ... 最新の動画ファイル情報リストを取得
-func ReadCurrent(dirPath string) (*MovieList, error) {
-
-	return nil, nil
 }

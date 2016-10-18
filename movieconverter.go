@@ -14,7 +14,8 @@ func Run(arg *Arg) {
 	log.Println(arg)
 	for {
 		// 指定ディレクトリ配下を最後に監視した際の動画ファイルリストを取得
-		previousList, err := ReadPrevious(arg.TargetDir)
+		prev := PreviousMovieList{TargetPath: arg.TargetDir}
+		previousList, err := prev.ReadMovieList()
 		if err != nil {
 			return
 		}
