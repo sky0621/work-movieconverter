@@ -17,6 +17,21 @@ func TestReadPrevious_NoFile(t *testing.T) {
 	}
 }
 
+func TestReadPrevious_NoMovie(t *testing.T) {
+	t.Log("[仕様]prev.listが空である場合 -> movieListの動画ファイル情報リストが要素数０になる。")
+	prev := PreviousMovieList{TargetDir: "testdata/movielist/previous_nomovie"}
+	movieList, err := prev.ReadMovieList()
+	if err != nil {
+		t.Fatalf("エラーが発生しました。 %s\n", err)
+	}
+	if movieList == nil {
+		t.Fatal("nil を返しました。")
+	}
+	if len(movieList.MovieFiles) != 0 {
+		t.Fatal("movieListの動画ファイル情報リストが要素数０ではありません。")
+	}
+}
+
 func TestReadPrevious_NoDir(t *testing.T) {
 	t.Log("[仕様]存在しないパスを指定した場合 -> nil を返す。")
 	prev := PreviousMovieList{TargetDir: "testdata/movielist/previous_nodir"}
@@ -58,6 +73,33 @@ func TestReadPrevious_AbNormal(t *testing.T) {
 	expected := buildValidExpected()
 	if !reflect.DeepEqual(movieList, expected) {
 		t.Fatalf("結果と期待値が要素レベルで異なっています。\n[実績値]：%#v\n[期待値]：%#v", movieList, expected)
+	}
+}
+
+func TestReadCurrent_NoMovie(t *testing.T) {
+	t.Log("[仕様]prev.listが空である場合 -> movieListの動画ファイル情報リストが要素数０になる。")
+	curr := CurrentMovieList{TargetDir: "testdata/movielist/current_nomovie", MovieSuffix: []string{".mp4"}}
+	movieList, err := curr.ReadMovieList()
+	if err != nil {
+		t.Fatalf("エラーが発生しました。 %s\n", err)
+	}
+	if movieList == nil {
+		t.Fatal("nil を返しました。")
+	}
+	if len(movieList.MovieFiles) != 0 {
+		t.Fatal("movieListの動画ファイル情報リストが要素数０ではありません。")
+	}
+}
+
+func TestReadCurrent_NoDir(t *testing.T) {
+	t.Log("[仕様]存在しないパスを指定した場合 -> nil を返す。")
+	curr := CurrentMovieList{TargetDir: "testdata/movielist/current_nodir", MovieSuffix: []string{".mp4"}}
+	movieList, err := curr.ReadMovieList()
+	if err != nil {
+		t.Fatalf("エラーが発生しました。 %s\n", err)
+	}
+	if movieList != nil {
+		t.Fatal("nil を返しませんでした。")
 	}
 }
 

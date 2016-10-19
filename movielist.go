@@ -79,12 +79,16 @@ type CurrentMovieList struct {
 
 // ReadMovieList ... 指定ディレクトリ配下の動画ファイルの一覧から、動画ファイル情報のリストを構造体として返却
 func (c *CurrentMovieList) ReadMovieList() (*MovieList, error) {
-	log.Println(c.TargetDir)
+	if _, err := os.Stat(c.TargetDir); err != nil {
+		log.Printf("指定ディレクトリ(%s)の状態が不正です。 [ERROR]%s\n", c.TargetDir, err)
+		return nil, nil
+	}
 	var movieFiles []MovieFile
+	// [MEMO]わざわざビジターパターンのファイルウォーク使わずとも、実はioutil.ReadDir(path)で事足りる・・・。
 	err := filepath.Walk(c.TargetDir, walkFunc(&movieFiles, c.MovieSuffix))
 	if err != nil {
 		log.Printf("指定ディレクトリ(%s)配下の動画ファイル一覧読み込み時にエラーが発生しました。 [ERROR]%s\n", c.TargetDir, err)
-		return nil, err
+		return nil, nil
 	}
 	return &MovieList{MovieFiles: movieFiles}, nil
 }
