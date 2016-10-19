@@ -61,11 +61,27 @@ func TestReadPrevious_AbNormal(t *testing.T) {
 	}
 }
 
+func TestReadCurrent_Exist(t *testing.T) {
+	t.Log("[仕様]指定のディレクトリ配下に動画ファイルが存在する場合 -> 読み込み、動画ファイル情報リストの構造体を返す。")
+	curr := CurrentMovieList{TargetDir: "./testdata/movielist/current_exist/", MovieSuffix: []string{".mp4"}}
+	movieList, err := curr.ReadMovieList()
+	if err != nil {
+		t.Fatalf("エラーが発生しました。 %s\n", err)
+	}
+	if movieList == nil {
+		t.Fatal("nil を返しました。")
+	}
+	expected := buildValidExpected()
+	if !reflect.DeepEqual(movieList, expected) {
+		t.Fatalf("結果と期待値が要素レベルで異なっています。\n[実績値]：%#v\n[期待値]：%#v", movieList, expected)
+	}
+}
+
 func buildValidExpected() *MovieList {
 	movieList := MovieList{
 		[]MovieFile{
-			MovieFile{MovieFileName: "Sample01.mp4", MovieUpdDatetime: "2016-10-18 17:03:49"},
-			MovieFile{MovieFileName: "Sample02.mp4", MovieUpdDatetime: "2016-09-05 05:52:00"},
+			MovieFile{MovieFileName: "sample01.mp4", MovieUpdDatetime: "2016-10-19 11:48:04.2648115 +0900 JST"},
+			MovieFile{MovieFileName: "sample02.mp4", MovieUpdDatetime: "2016-10-19 11:48:19.0122648 +0900 JST"},
 		},
 	}
 	return &movieList

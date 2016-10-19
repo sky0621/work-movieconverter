@@ -42,7 +42,7 @@ func parseFlag() (*mc.Arg, error) {
 	flag.BoolVar(&showVersion, "v", false, "バージョン")
 	flag.StringVar(&targetDir, "t", ".", "監視対象ディレクトリ")
 	flag.StringVar(&sleepSecond, "s", "60", "監視間隔（秒）")
-	flag.StringVar(&movieSuffix, "x", "mp4", "監視対象動画ファイル拡張子群")
+	flag.StringVar(&movieSuffix, "x", ".mp4", "監視対象動画ファイル拡張子群")
 	flag.StringVar(&outputDir, "o", "out", "変換結果出力先ディレクトリ")
 	flag.StringVar(&logDir, "l", ".", "ログ出力先ディレクトリ")
 	flag.Parse()

@@ -53,18 +53,6 @@ func (p *PreviousMovieList) ReadMovieList() (*MovieList, error) {
 	return &MovieList{MovieFiles: movieFiles}, nil
 }
 
-// CurrentMovieList ... 最新の動画ファイル情報リスト取得用の構造体
-type CurrentMovieList struct {
-	TargetDir   string
-	MovieSuffix []string
-}
-
-// ReadMovieList ... 指定ディレクトリ配下の動画ファイルの一覧から、動画ファイル情報のリストを構造体として返却
-func (c *CurrentMovieList) ReadMovieList() (*MovieList, error) {
-
-	return nil, nil
-}
-
 func isInvalidLine(line string) bool {
 	lineSeps := strings.Split(line, ",")
 	if len(lineSeps) != 2 {
@@ -81,4 +69,43 @@ func createMovieFile(line string) MovieFile {
 	return MovieFile{
 		MovieFileName:    lineSeps[0],
 		MovieUpdDatetime: lineSeps[1]}
+}
+
+// CurrentMovieList ... 最新の動画ファイル情報リスト取得用の構造体
+type CurrentMovieList struct {
+	TargetDir   string
+	MovieSuffix []string
+}
+
+// ReadMovieList ... 指定ディレクトリ配下の動画ファイルの一覧から、動画ファイル情報のリストを構造体として返却
+func (c *CurrentMovieList) ReadMovieList() (*MovieList, error) {
+	log.Println(c.TargetDir)
+	var movieFiles []MovieFile
+	err := filepath.Walk(c.TargetDir, walkFunc(&movieFiles, c.MovieSuffix))
+	if err != nil {
+		log.Printf("指定ディレクトリ(%s)配下の動画ファイル一覧読み込み時にエラーが発生しました。 [ERROR]%s\n", c.TargetDir, err)
+		return nil, err
+	}
+	return &MovieList{MovieFiles: movieFiles}, nil
+}
+
+// [MEMO]ファイルウォークの場合は、任意のデータを詰めたりするのにクロージャ使う必要あり
+func walkFunc(movieFiles *[]MovieFile, movieSuffix []string) filepath.WalkFunc {
+	return func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
+			return nil
+		}
+		ext := filepath.Ext(info.Name())
+		// [MEMO]こんなユーティリティすら無い様子・・・。
+		for _, suffix := range movieSuffix {
+			if ext == suffix {
+				*movieFiles = append(
+					*movieFiles,
+					MovieFile{
+						MovieFileName:    info.Name(),
+						MovieUpdDatetime: info.ModTime().String()})
+			}
+		}
+		return nil
+	}
 }
