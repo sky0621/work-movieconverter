@@ -11,7 +11,6 @@ import (
 var version = "0.1.0"
 
 func main() {
-	log.Println("[START]movieconverter")
 	arg, err := parseFlag()
 	if err != nil {
 		os.Exit(1) // おそらくバリデーションに失敗
@@ -19,6 +18,14 @@ func main() {
 	if arg == nil {
 		os.Exit(0)
 	}
+
+	logfile, lerr := mc.SetupLog(arg.LogDir)
+	if lerr != nil {
+		os.Exit(1)
+	}
+	defer logfile.Close()
+
+	log.Println("[START]movieconverter")
 	mc.Run(arg)
 	log.Println("[END]movieconverter")
 }
