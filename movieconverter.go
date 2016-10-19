@@ -11,15 +11,22 @@ import (
 
 // Run ...
 func Run(arg *Arg) {
-	log.Println(arg)
 	for {
 		// 指定ディレクトリ配下を最後に監視した際の動画ファイルリストを取得
-		prev := PreviousMovieList{TargetPath: arg.TargetDir}
-		previousList, err := prev.ReadMovieList()
-		if err != nil {
+		prev := PreviousMovieList{TargetDir: arg.TargetDir}
+		previousList, perr := prev.ReadMovieList()
+		if perr != nil {
 			return
 		}
 		log.Println(previousList)
+
+		// 指定ディレクトリ配下の動画ファイルの一覧から動画ファイルリストを取得
+		curr := CurrentMovieList{TargetDir: arg.TargetDir, MovieSuffix: arg.MovieSuffix}
+		currentList, cerr := curr.ReadMovieList()
+		if cerr != nil {
+			return
+		}
+		log.Println(currentList)
 
 		time.Sleep(time.Duration(arg.SleepSecond) * time.Second)
 	}

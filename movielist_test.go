@@ -7,7 +7,19 @@ import (
 
 func TestReadPrevious_NoFile(t *testing.T) {
 	t.Log("[仕様]prev.listが存在しない場合 -> nil を返す。")
-	prev := PreviousMovieList{TargetPath: "testdata/movielist/previous_nofile"}
+	prev := PreviousMovieList{TargetDir: "testdata/movielist/previous_nofile"}
+	movieList, err := prev.ReadMovieList()
+	if err != nil {
+		t.Fatalf("エラーが発生しました。 %s\n", err)
+	}
+	if movieList != nil {
+		t.Fatal("nil を返しませんでした。")
+	}
+}
+
+func TestReadPrevious_NoDir(t *testing.T) {
+	t.Log("[仕様]存在しないパスを指定した場合 -> nil を返す。")
+	prev := PreviousMovieList{TargetDir: "testdata/movielist/previous_nodir"}
 	movieList, err := prev.ReadMovieList()
 	if err != nil {
 		t.Fatalf("エラーが発生しました。 %s\n", err)
@@ -19,7 +31,7 @@ func TestReadPrevious_NoFile(t *testing.T) {
 
 func TestReadPrevious_Exist(t *testing.T) {
 	t.Log("[仕様]prev.listが存在する場合 -> 読み込み、動画ファイル情報リストの構造体を返す。")
-	prev := PreviousMovieList{TargetPath: "testdata/movielist/previous_exist"}
+	prev := PreviousMovieList{TargetDir: "testdata/movielist/previous_exist"}
 	movieList, err := prev.ReadMovieList()
 	if err != nil {
 		t.Fatalf("エラーが発生しました。 %s\n", err)
@@ -35,7 +47,7 @@ func TestReadPrevious_Exist(t *testing.T) {
 
 func TestReadPrevious_AbNormal(t *testing.T) {
 	t.Log("[仕様]prev.listが存在するが不正な行が含まれる場合 -> 不正な行以外を読み込み、動画ファイル情報リストの構造体を返す。")
-	prev := PreviousMovieList{TargetPath: "testdata/movielist/previous_abnormal"}
+	prev := PreviousMovieList{TargetDir: "testdata/movielist/previous_abnormal"}
 	movieList, err := prev.ReadMovieList()
 	if err != nil {
 		t.Fatalf("エラーが発生しました。 %s\n", err)

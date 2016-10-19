@@ -16,9 +16,7 @@ func SetupLog(logDir string) (*os.File, error) {
 	}
 
 	log.SetOutput(io.MultiWriter(logfile, os.Stdout))
-
 	log.SetFlags(log.Ldate | log.Ltime)
 
-	log.Println("log !!!")
 	return logfile, nil
 }

@@ -26,12 +26,12 @@ type ReadMovieList interface {
 
 // PreviousMovieList ... 前回監視時の動画ファイル情報リスト取得用の構造体
 type PreviousMovieList struct {
-	TargetPath string
+	TargetDir string
 }
 
-// ReadMovieList ...
+// ReadMovieList ... 前回監視時に作成した動画ファイル情報リストを読み込み、構造体として返却
 func (p *PreviousMovieList) ReadMovieList() (*MovieList, error) {
-	file, err := os.OpenFile(filepath.Join(p.TargetPath, "prev.list"), os.O_RDONLY, 0)
+	file, err := os.OpenFile(filepath.Join(p.TargetDir, "prev.list"), os.O_RDONLY, 0)
 	if err != nil {
 		return nil, nil
 	}
@@ -55,10 +55,11 @@ func (p *PreviousMovieList) ReadMovieList() (*MovieList, error) {
 
 // CurrentMovieList ... 最新の動画ファイル情報リスト取得用の構造体
 type CurrentMovieList struct {
-	TargetPath string
+	TargetDir   string
+	MovieSuffix []string
 }
 
-// ReadMovieList ...
+// ReadMovieList ... 指定ディレクトリ配下の動画ファイルの一覧から、動画ファイル情報のリストを構造体として返却
 func (c *CurrentMovieList) ReadMovieList() (*MovieList, error) {
 
 	return nil, nil
